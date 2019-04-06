@@ -1,0 +1,102 @@
+---
+title: "Machine Learning Course Project"
+author: "Sheetal"
+date: "25 December 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Introduction
+
+One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants.
+
+The goal of your project is to predict the manner in which they did the exercise. This is the "classe" variable in the training set. You may use any of the other variables to predict with. You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(caret)
+library(randomForest)
+library(rpart)
+library(rpart.plot)
+```
+Import in datasets
+
+```{r}
+test <- read.csv("C:/Users/Sheetal/datasciencecoursera/machinelearning project/pml-testing.csv")
+train <- read.csv("C:/Users/Sheetal/datasciencecoursera/machinelearning project/pml-training.csv")
+
+trainRaw <- train[, colSums(is.na(train)) == 0] 
+testRaw <- test[, colSums(is.na(test)) == 0] 
+
+classe <- trainRaw$classe
+trainRemove <- grepl("^X|timestamp|window", names(trainRaw))
+trainRaw <- trainRaw[, !trainRemove]
+trainCleaned <- trainRaw[, sapply(trainRaw, is.numeric)]
+trainCleaned$classe <- classe
+testRemove <- grepl("^X|timestamp|window", names(testRaw))
+testRaw <- testRaw[, !testRemove]
+testCleaned <- testRaw[, sapply(testRaw, is.numeric)]
+```
+
+The aim is to predict classe which is the manner in which they did their exercise (sitting-down, standing-up, standing, walking, and sitting)
+
+## Exploratory Data Analysis
+
+```{r}
+table(trainCleaned$classe)
+prop.table(table(trainCleaned$classe)) 
+```
+
+This shows that class A has the most observations and the largerst proportion 28.43%
+
+##Split Datasets
+```{r, cache = T}
+set.seed(22519) # For reproducibile purpose
+inTrain <- createDataPartition(trainCleaned$classe, p=0.70, list=F)
+trainData <- trainCleaned[inTrain, ]
+testData <- trainCleaned[-inTrain, ]
+```
+
+We then build the random forrest model,as it will chose the variables of most importance
+
+```{r, cache = T}
+controlRf <- trainControl(method="cv", 5)
+modelRf <- train(classe ~ ., data=trainData, method="rf", trControl=controlRf, ntree=25)
+modelRf
+```
+
+The accuracy of the model in the train dataset is 98.6 %. Now we can predict the accuract on the test dataset to validate.
+```{r, cache = T}
+predictRfmod<- predict(modelRf, testData)
+confusionMatrix(testData$classe, predictRfmod)
+```
+
+The accuracy of the modl is 99.2%
+
+The below section shows the results for the test data sample
+
+```{r, cache = T}
+result <- predict(modelRf, testCleaned[, -length(names(testCleaned))])
+result
+```  
+
+
+```{r, cache = T}
+treeModel <- rpart(classe ~ ., data=trainData, method="class")
+prp(treeModel) # fast plot
+```
+
+
+```{r, cache = T}
+plot(modelRf,main="Accuracy of Random forest model by number of predictors")
+```
+
+##Conclusion
+The random forrest model has given a highly accurate result with 27 predictors. The model has probably worked well due to the large amount of variables that we had to explore.

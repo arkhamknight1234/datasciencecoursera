@@ -1,0 +1,115 @@
+---
+title: "Regression Models Course Project"
+author: "Sheetal"
+date: "19 October 2018"
+output: pdf_document
+---
+
+
+##Executive Summary'
+The purpose of this report is the answer 2 questions :
+1.“Is an automatic or manual transmission better for MPG”
+2."Quantify the MPG difference between automatic and manual transmission
+
+Information on the datasets is found in the R help guides. There are 10 variables :
+1 mpg: Miles/(US) gallon
+2 cyl: Number of cylinders
+3 disp: Displacement (cu.in.)
+4 hp: Gross horsepower
+5 drat: Rear axle ratio
+6 wt: Weight (1000 lbs)
+7 qsec: 1/4 mile time
+8 vs: V/S
+9 am: Transmission (0 = automatic, 1 = manual)
+10 gear: Number of forward gears
+11 carb: Number of carburetors
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Expoloratory Data Analysis
+The below sections peforms some preliminary exporation of the dataset
+
+```{r,echo=TRUE}
+mtcars <-mtcars
+summary(mtcars)
+```
+There ae 32 observations.
+
+The summary statistics shows that there is 1 dependendant variable and 10 explanotary variables. VS and AM are factor variablese so they need to be catered for 
+
+```{r}
+mtcars$vs <- as.factor(mtcars$vs)
+mtcars$am <- as.factor(mtcars$am)
+```
+
+#1.“Is an automatic or manual transmission better for MPG”
+
+
+```{r,echo=TRUE}
+boxplot(mpg ~ am, data = mtcars,
+         col  = c("pink", "blue"),
+         xlab = "Transmission",
+         ylab = "Miles per Gallon",
+         main = "MPG by Transmission Type",
+         names= c("automatic","manual"),
+         horizontal= T) 
+
+```
+
+From the box plot on appears that the manual tranmission has greater miles per gallon on average.
+
+This can be double checked via hyphothesis testing
+            
+              H0 : The transmission type has no impact on miles per gallon
+              H1 : The transmission type impacts mile per gallon
+
+```{r}
+auto=subset(mtcars,select=mpg,am==0)
+manual=subset(mtcars,select=mpg,am==1)
+t.test(auto,manual)
+```
+
+As the p-value is small we can reject the null hypothesis.
+
+#2."Quantify the MPG difference between automatic and manual transmission
+
+#Linear Regressions
+
+```{R}
+simpleregression <- lm(mpg~am,mtcars) 
+summary(simpleregression)
+```
+
+Doing a simple linear regression between miles per gallon (MPG) and transmission, shows that manual is better by 7.245 miles per gallon. The R squared is only 36%, so there is more variance to explain,
+
+The next step is multiple regession
+
+```{R}
+multipleregression <- lm(mpg~.,mtcars)
+summary(multipleregression)
+```
+
+The R squared has now improved to 86.9%,  It now looks like manual is better by 2.52 miles per gallon.The p values have all gone up, and now none of the coeffincents are significant.
+
+I am now going to try step wise regression
+
+```{R}
+regSR=step(multipleregression,trace=0)
+summary(regSR)
+
+```
+
+The R squared is 85%, and now we are left with significant coefficents :
+wt: Weight (1000 lbs)
+qsec: 1/4 mile time
+Transmission (0 = automatic, 1 = manual)
+
+We can now conclude that manual transmission allows 2.9358 miles than automatic transmission.
+
+```{R}
+plot(regSR, which=c(1:1))
+```
+The residuals look fairly low for the final stepwise model

@@ -1,0 +1,19 @@
+---
+title: "Developing Data Products Week 3 Assignment"
+author: "Sheetal"
+date: "12 January 2019"
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
+---
+
+##Project
+####I have created this webpage for week 3 of the coursera developing dfata products course. The goal is to  create a web page presentation using R Markdown that features a plot created with Plotly
+
+
+##Iris Dataset plotly
+```{r,plotly=TRUE, echo=FALSE, message=FALSE}
+library("plotly")
+plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length)
+```
+

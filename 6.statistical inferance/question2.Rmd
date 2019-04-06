@@ -1,0 +1,121 @@
+---
+title: "Statistical Interferance Course Project Part 2 Impact of different vitamin C dose levels"
+author: "Sheetal"
+date: "6 October 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+library(ggplot2)
+library(dplyr)
+```
+
+##Overview
+The purpose of this report is to analyse the effect on tooth growth by supplement and dose.The dataset is the length of odobtoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of
+vitamin C (0.5,1,2 mg/d) The dataset has 3 variables 
+[,1]	len	numeric	Tooth length
+[,2]	supp	factor	Supplement type (VC or OJ).
+[,3]	dose	numeric	Dose in milligrams/day
+
+```{r echo=FALSE}
+
+with(ToothGrowth, table(dose, supp))
+
+```
+
+##Exploratory Data Analysis
+
+```{r echo=FALSE, fig.width=7, fig.height=2.5, fig.align='center'}
+
+ggplot(ToothGrowth, aes(supp, len)) + 
+  geom_boxplot() +
+  xlab('Supplement type') +
+  ylab('Tooth length (mm)') +
+  ggtitle('Tooth length by supplement type')
+```
+
+The boxplot shows that those guinea pigs that recieved their supplement via orange juice have a greater tooth length on average then those recieving the dose via absorbic acid (VC). The range is greater for absorbic acid compared to orange juice.
+
+
+```{r echo=FALSE, fig.width=7, fig.height=2.5, fig.align='center'}
+ ggplot(ToothGrowth, aes(as.factor(dose), len)) + 
+  geom_boxplot() +
+  xlab('Dose (mg)') +
+  ylab('Tooth length (mm)') +
+  ggtitle('Tooth length by dose level')
+
+```
+
+The boxplot shows that tooth growth with a 0.5mg dose has a very high range of tooth growth. Each group has a different median and different interquartile range suggesting that the dose may have an impact on tooth growth.
+
+##Hypthothesis tests
+
+### Difference in supplement types
+H0 : there is no statistically significant difference on tooth growth between the two supplement types
+H1 : there is a statistically significant difference on tooth growth between the two supplement types
+
+Given the small sample size, a t-test would be a useful tool.
+
+```{r echo=FALSE}
+
+t_diff_supp <- t.test(len ~ supp, ToothGrowth, var.equal = FALSE)
+t_diff_supp$p.value
+```
+
+The output p value is 0.0606. This is larger than the significance value 0.05, and hence we fail to reject the null hypothesis. Both supplement types have the same effect on tooth growth
+
+###Difference in dose levels
+As there are three different dose levels, I will keep the null hyptothesis as
+
+H0: There is no statistical difference in tooth growth between the doeses.
+
+Each alternative hypthosis is tested against the null
+
+H1 : The 0.5mg dose as a statistically significant difference
+
+```{r echo=FALSE}
+
+hypoth1<-t.test(len ~ supp, data = subset(ToothGrowth, dose == 0.5))
+hypoth1$conf.int
+hypoth1$p.value
+```
+The p value is 0.006 at a 95% confidence interval. This is below the threshold, and hence the null hypothesis can be rejected, a 0.5mg dose does make a significant difference.
+
+H2: The 1mg does has a statistically significant difference
+```{r echo=FALSE}
+
+hypoth2<-t.test(len ~ supp, data = subset(ToothGrowth, dose == 1.0))
+hypoth2$conf.int
+hypoth2$p.value
+```
+The p value is 0.001 at a 95% confidence interval. This is below the threshold, and hence the null hypothesis can be rejected, a 0.5mg dose does make a significant difference.
+
+H3: The 2.0mg dose as a statistically significant difference
+
+```{r echo=FALSE}
+
+hypoth3<-t.test(len ~ supp, data = subset(ToothGrowth, dose == 2.0))
+hypoth3$conf.int
+hypoth3$p.value
+```
+The p value is 0.96 at a 95% confidence interval. This is above the threshold, and hence the null hypothesis can not be rejected, a 2.0mg dose does not make a significant difference.
+
+##Conclusion
+Both supplement types (orange juice and absorbic acid) have the same impact on tooth decay
+Orange juice delivers more tooth growth at doses 0.5 and 1.0 , there is no differnce at dose 2.0
+
+##Assumptions
+1. Normal distribution
+2. No other variables can explain tooth growth
+
+
+
+
+
+
+

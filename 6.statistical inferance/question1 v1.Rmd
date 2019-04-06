@@ -1,0 +1,72 @@
+---
+title: "Statistical Inferance Course Project Question 1"
+author: "Sheetal"
+date: "13 October 2018"
+output: pdf_document
+---
+
+#Simulation Exercise
+The purpose of this project is to investigate the exponential distribution in R and compare it with the Cental Limit Theorem.
+The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter.
+ compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. 
+ 
+ Lambda = 0.2
+ Simulations = 1000
+
+
+
+#Question 1
+Show the sample mean and compare it to the theoretical mean of the distribution.
+
+```{r}
+lambda <- 0.2
+Data <- matrix(rexp(1000*40, lambda), nrow = 1000, ncol = 40)
+distMean <- apply(Data, 1, mean)
+```
+
+```{r echo=TRUE, fig.width=7, fig.height=3, fig.align='center'}
+
+hist(distMean, breaks = 50, main = "The distribution of 1000 averages of 40 random exponentials", 
+      xlab = "Value of means", ylab = "Frequency of means", col = "pink")
+abline(v = 1/lambda, lty = 1, lwd = 5, col = "yellow")
+legend("topright", lty = 1, lwd = 5, col = "yellow", legend = "theoretical mean")
+
+```
+
+In the abopve chart, I have simulated the exponential distribution 1000 times, and created a distrbution of the means. The AB line is at the mean. The results show that the sample mean is close to the theoretrical mean.
+
+
+the below is the mean for all the sumulations one at a time #
+```{r}
+simMean <- rowMeans(Data)
+```
+
+the below is the mean for the data, in this case 4.9632
+```{r}
+simMeanMean <- mean(simMean)
+```
+
+the theatrical mean is 1/lambda i.e 1/0.2, in this case 5
+```{r}
+theatricalmean <- 1/0.2
+```
+both the sample mean and the theatrical mean are similar
+
+
+#Question 2
+Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+```{r}
+simulationvar <- var(simMean)
+theatricalvar <- (1/lambda)^2/(40) 
+```
+
+simulation variance is 0.61, theatrical variance is 0.62 and hence they are close
+
+#Question 3
+Show that the distribution is approximately normal
+```{r echo=TRUE, fig.width=7, fig.height=3, fig.align='center'}
+hist(distMean, breaks = 50, main = "The distribution of 1000 averages of 40 random exponentials", 
+     xlab = "Value of means", ylab = "Frequency of means", col = "pink")
+```
+
+The output graph looks close to a normal distribution

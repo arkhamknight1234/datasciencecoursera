@@ -1,0 +1,18 @@
+---
+title: "Developing Data Products"
+author: "Sheetal"
+date: "11 January 2019"
+output: html_document
+---
+
+#This project is created for the developing data products coursera course. 
+I have created a map to the Sunshine Village Ski Resort in Canada.
+
+```{r}
+library(leaflet)
+
+leaflet() %>%
+  addTiles() %>%
+  addMarkers(lat=51.0443, lng=-115.4656, popup = "SunshineVillage")
+```
+

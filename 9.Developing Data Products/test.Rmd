@@ -1,0 +1,92 @@
+
+---
+title: "knitr_session"
+author: "Marianne Corvellec"
+date: '2014-11-14'
+output: html_document
+---
+
+(View source here: https://gist.github.com/mkcor/1ca67262c74c590bd6e9)
+
+This is an R Markdown document. Markdown is a simple formatting syntax for
+authoring documents. For more details on using R Markdown see
+<http://rmarkdown.rstudio.com>.
+
+You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r}
+library(plotly)
+gg <- ggplot(cars) + geom_point(aes(speed, dist))
+gg
+```
+
+
+```{r, plotly=TRUE}
+py <- plotly()
+py$ggplotly(gg, session="knitr", kwargs=list(filename="cars_knitr",
+                                             fileopt="overwrite"))
+```
+
+You can embed a static plot using Markdown syntax:
+![cars_plot](https://plot.ly/~marianne2/167.png)
+
+Notice that we simply appended a supported extension (.png) to the URL where the
+plotly plot lives.
+
+You can also use HTML syntax to embed iframes:
+<iframe scrolling='no' seamless='seamless' style='border:none'
+src='https://plot.ly/~MattSundquist/2509' width='800' height='500'></iframe>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
